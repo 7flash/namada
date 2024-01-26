@@ -51,8 +51,6 @@ use masp_proofs::bellman::groth16::PreparedVerifyingKey;
 use masp_proofs::bls12_381::Bls12;
 use masp_proofs::prover::LocalTxProver;
 use masp_proofs::sapling::SaplingVerificationContext;
-use namada_core::ibc::core::channel::types::msgs::PacketMsg;
-use namada_core::ibc::core::handler::types::msgs::MsgEnvelope;
 use namada_core::types::address::{Address, MASP};
 use namada_core::types::dec::Dec;
 use namada_core::types::masp::{
@@ -2799,17 +2797,13 @@ async fn extract_payload_from_shielded_action<'args, C: Client + Sync>(
 
             (tx_result.changed_keys, shielded_transfer.masp_tx)
         }
-        IbcMessage::Envelope(envelope) => {
-            if let MsgEnvelope::Packet(PacketMsg::Recv(msg)) = *envelope {
-                let tx_event = match args {
-                    ExtractShieldedActionArg::Event(event) => {
-                        std::borrow::Cow::Borrowed(event)
-                    }
-                    ExtractShieldedActionArg::Request((
-                        client,
-                        height,
-                        index,
-                    )) => std::borrow::Cow::Owned(
+        IbcMessage::RecvPacket(msg) => {
+            let tx_event = match args {
+                ExtractShieldedActionArg::Event(event) => {
+                    std::borrow::Cow::Borrowed(event)
+                }
+                ExtractShieldedActionArg::Request((client, height, index)) => {
+                    std::borrow::Cow::Owned(
                         get_indexed_masp_events_at_height(
                             client, height, index,
                         )
@@ -2829,24 +2823,22 @@ async fn extract_payload_from_shielded_action<'args, C: Client + Sync>(
                         })?
                         .1
                         .to_owned(),
-                    ),
-                };
+                    )
+                }
+            };
 
-                let tx_result = get_tx_result(&tx_event)?;
+            let tx_result = get_tx_result(&tx_event)?;
 
-                let shielded_transfer = namada_ibc::get_shielded_transfer(&msg)
-                    .ok_or_else(|| {
-                        Error::Other(
-                            "Missing masp tx in the ibc message".to_string(),
-                        )
-                    })?;
+            let shielded_transfer = msg.shielded_transfer.ok_or_else(|| {
+                Error::Other("Missing masp tx in the ibc message".to_string())
+            })?;
 
-                (tx_result.changed_keys, shielded_transfer.masp_tx)
-            } else {
-                return Err(Error::Other(
-                    "Unexpected ibc message for masp".to_string(),
-                ));
-            }
+            (tx_result.changed_keys, shielded_transfer.masp_tx)
+        }
+        IbcMessage::Envelope(_) => {
+            return Err(Error::Other(
+                "Unexpected ibc message for masp".to_string(),
+            ));
         }
     };
 
