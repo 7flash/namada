@@ -8,12 +8,12 @@ use masp_primitives::transaction::Transaction;
 use namada_core::borsh::BorshDeserialize;
 use namada_core::types::address::Address;
 use namada_core::types::hash::Hash;
-use namada_core::types::ibc::IbcEvent;
+use namada_core::types::ibc::{IbcEvent, IbcMessage};
 use namada_core::types::storage::{
     BlockHash, BlockHeight, Epoch, Epochs, Header, Key, TxIndex,
 };
 use namada_core::types::token::Transfer;
-use namada_ibc::{decode_message, IbcMessage};
+use namada_ibc::decode_message;
 use namada_storage::{OptionExt, StorageRead};
 use namada_tx::Tx;
 
@@ -136,6 +136,8 @@ where
             IbcMessage::Transfer(msg) => msg.shielded_transfer,
             IbcMessage::NftTransfer(msg) => msg.shielded_transfer,
             IbcMessage::RecvPacket(msg) => msg.shielded_transfer,
+            IbcMessage::AckPacket(msg) => msg.shielded_transfer,
+            IbcMessage::Timeout(msg) => msg.shielded_transfer,
             IbcMessage::Envelope(_) => None,
         };
         shielded_transfer

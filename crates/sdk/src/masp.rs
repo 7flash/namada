@@ -53,6 +53,7 @@ use masp_proofs::prover::LocalTxProver;
 use masp_proofs::sapling::SaplingVerificationContext;
 use namada_core::types::address::{Address, MASP};
 use namada_core::types::dec::Dec;
+use namada_core::types::ibc::IbcMessage;
 use namada_core::types::masp::{
     encode_asset_type, AssetData, BalanceOwner, ExtendedViewingKey,
     PaymentAddress, TransferSource, TransferTarget,
@@ -60,7 +61,6 @@ use namada_core::types::masp::{
 use namada_core::types::storage::{BlockHeight, Epoch, IndexedTx, TxIndex};
 use namada_core::types::time::{DateTimeUtc, DurationSecs};
 use namada_core::types::uint::Uint;
-use namada_ibc::IbcMessage;
 use namada_token::{self as token, Denomination, MaspDigitPos, Transfer};
 use namada_tx::data::{TxResult, WrapperTx};
 use namada_tx::Tx;
@@ -2760,17 +2760,7 @@ async fn extract_payload_from_shielded_action<'args, C: Client + Sync>(
 
     let result = match message {
         IbcMessage::Transfer(msg) => {
-            let tx_event = match args {
-                ExtractShieldedActionArg::Event(event) => event,
-                ExtractShieldedActionArg::Request(_) => {
-                    return Err(Error::Other(
-                        "Unexpected event request for ShieldedTransfer"
-                            .to_string(),
-                    ));
-                }
-            };
-
-            let tx_result = get_tx_result(tx_event)?;
+            let tx_result = get_sending_result(args)?;
 
             let shielded_transfer = msg.shielded_transfer.ok_or_else(|| {
                 Error::Other("Missing masp tx in the ibc message".to_string())
@@ -2779,17 +2769,7 @@ async fn extract_payload_from_shielded_action<'args, C: Client + Sync>(
             (tx_result.changed_keys, shielded_transfer.masp_tx)
         }
         IbcMessage::NftTransfer(msg) => {
-            let tx_event = match args {
-                ExtractShieldedActionArg::Event(event) => event,
-                ExtractShieldedActionArg::Request(_) => {
-                    return Err(Error::Other(
-                        "Unexpected event request for ShieldedTransfer"
-                            .to_string(),
-                    ));
-                }
-            };
-
-            let tx_result = get_tx_result(tx_event)?;
+            let tx_result = get_sending_result(args)?;
 
             let shielded_transfer = msg.shielded_transfer.ok_or_else(|| {
                 Error::Other("Missing masp tx in the ibc message".to_string())
@@ -2798,36 +2778,27 @@ async fn extract_payload_from_shielded_action<'args, C: Client + Sync>(
             (tx_result.changed_keys, shielded_transfer.masp_tx)
         }
         IbcMessage::RecvPacket(msg) => {
-            let tx_event = match args {
-                ExtractShieldedActionArg::Event(event) => {
-                    std::borrow::Cow::Borrowed(event)
-                }
-                ExtractShieldedActionArg::Request((client, height, index)) => {
-                    std::borrow::Cow::Owned(
-                        get_indexed_masp_events_at_height(
-                            client, height, index,
-                        )
-                        .await?
-                        .ok_or_else(|| {
-                            Error::Other(format!(
-                                "Missing required ibc event at block height {}",
-                                height
-                            ))
-                        })?
-                        .first()
-                        .ok_or_else(|| {
-                            Error::Other(format!(
-                                "Missing required ibc event at block height {}",
-                                height
-                            ))
-                        })?
-                        .1
-                        .to_owned(),
-                    )
-                }
-            };
+            let tx_result = get_receiving_result(args).await?;
 
-            let tx_result = get_tx_result(&tx_event)?;
+            let shielded_transfer = msg.shielded_transfer.ok_or_else(|| {
+                Error::Other("Missing masp tx in the ibc message".to_string())
+            })?;
+
+            (tx_result.changed_keys, shielded_transfer.masp_tx)
+        }
+        IbcMessage::AckPacket(msg) => {
+            // Refund tokens by the ack message
+            let tx_result = get_receiving_result(args).await?;
+
+            let shielded_transfer = msg.shielded_transfer.ok_or_else(|| {
+                Error::Other("Missing masp tx in the ibc message".to_string())
+            })?;
+
+            (tx_result.changed_keys, shielded_transfer.masp_tx)
+        }
+        IbcMessage::Timeout(msg) => {
+            // Refund tokens by the timeout message
+            let tx_result = get_receiving_result(args).await?;
 
             let shielded_transfer = msg.shielded_transfer.ok_or_else(|| {
                 Error::Other("Missing masp tx in the ibc message".to_string())
@@ -2843,6 +2814,54 @@ async fn extract_payload_from_shielded_action<'args, C: Client + Sync>(
     };
 
     Ok(result)
+}
+
+fn get_sending_result<C: Client + Sync>(
+    args: ExtractShieldedActionArg<'_, C>,
+) -> Result<TxResult, Error> {
+    let tx_event = match args {
+        ExtractShieldedActionArg::Event(event) => event,
+        ExtractShieldedActionArg::Request(_) => {
+            return Err(Error::Other(
+                "Unexpected event request for ShieldedTransfer".to_string(),
+            ));
+        }
+    };
+
+    get_tx_result(tx_event)
+}
+
+async fn get_receiving_result<C: Client + Sync>(
+    args: ExtractShieldedActionArg<'_, C>,
+) -> Result<TxResult, Error> {
+    let tx_event = match args {
+        ExtractShieldedActionArg::Event(event) => {
+            std::borrow::Cow::Borrowed(event)
+        }
+        ExtractShieldedActionArg::Request((client, height, index)) => {
+            std::borrow::Cow::Owned(
+                get_indexed_masp_events_at_height(client, height, index)
+                    .await?
+                    .ok_or_else(|| {
+                        Error::Other(format!(
+                            "Missing required ibc event at block height {}",
+                            height
+                        ))
+                    })?
+                    .first()
+                    .ok_or_else(|| {
+                        Error::Other(format!(
+                            "Missing required ibc event at block height {}",
+                            height
+                        ))
+                    })?
+                    .1
+                    .to_owned(),
+            )
+        }
+    };
+
+    get_tx_result(&tx_event)
 }
 
 fn get_tx_result(
