@@ -54,8 +54,9 @@ pub use namada_core::ibc::*;
 use namada_core::types::address::{Address, MASP};
 use namada_core::types::ibc::{
     is_ibc_denom, is_nft_trace, IbcMessage, IbcShieldedTransfer,
-    MsgNftTransfer, MsgRecvPacket, MsgTransfer, EVENT_ATTRIBUTE_SUCCESS,
-    EVENT_TYPE_NFT_PACKET, EVENT_TYPE_PACKET, EVENT_VALUE_SUCCESS,
+    MsgAcknowledgement, MsgNftTransfer, MsgRecvPacket, MsgTimeout, MsgTransfer,
+    EVENT_ATTRIBUTE_SUCCESS, EVENT_TYPE_NFT_PACKET, EVENT_TYPE_PACKET,
+    EVENT_VALUE_SUCCESS,
 };
 use namada_core::types::masp::PaymentAddress;
 use prost::Message;
@@ -432,6 +433,15 @@ pub fn decode_message(tx_data: &[u8]) -> Result<IbcMessage, Error> {
         return Ok(IbcMessage::RecvPacket(msg));
     }
 
+    // Acknowledge packet message with `IbcShieldedTransfer`
+    if let Ok(msg) = MsgAcknowledgement::try_from_slice(tx_data) {
+        return Ok(IbcMessage::AckPacket(msg));
+    }
+    // Timeout packet message with `IbcShieldedTransfer`
+    if let Ok(msg) = MsgTimeout::try_from_slice(tx_data) {
+        return Ok(IbcMessage::Timeout(msg));
+    }
+
     Err(Error::DecodingData)
 }
 
@@ -510,7 +520,13 @@ pub fn received_ibc_token(
         dest_port_id,
         dest_channel_id,
     )?;
-    Ok(storage::ibc_token(ibc_trace))
+    if ibc_trace.contains('/') {
+        Ok(storage::ibc_token(ibc_trace))
+    } else {
+        // the token is a base token
+        Address::decode(&ibc_trace)
+            .map_err(|e| Error::Trace(format!("Invalid token: {e}")))
+    }
 }
 
 #[cfg(any(test, feature = "testing"))]
