@@ -4646,6 +4646,7 @@ version = "0.31.7"
 dependencies = [
  "borsh",
  "masp_primitives",
+ "namada_controller",
  "namada_core",
  "namada_parameters",
  "namada_storage",
