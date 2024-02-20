@@ -24,9 +24,10 @@ mod tests;
 
 use core::fmt::Debug;
 use std::cmp::{self};
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, BTreeSet};
 
 pub use error::*;
+use namada_core::collections::HashSet;
 use namada_core::types::address::{Address, InternalAddress};
 use namada_core::types::dec::Dec;
 use namada_core::types::key::common;

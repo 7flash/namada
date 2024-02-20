@@ -1,5 +1,4 @@
 use core::time::Duration;
-use std::collections::HashMap;
 
 use ibc_testkit::testapp::ibc::clients::mock::client_state::{
     client_type, MockClientState,
@@ -82,6 +81,7 @@ use namada::types::storage::{
 };
 use namada::types::time::DurationSecs;
 use namada::vm::{wasm, WasmCacheRwAccess};
+use namada_core::collections::HashMap;
 use namada_test_utils::TestWasms;
 use namada_tx_prelude::BorshSerializeExt;
 

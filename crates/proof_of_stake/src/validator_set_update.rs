@@ -1,7 +1,6 @@
 //! Validator set updates
 
-use std::collections::{HashMap, HashSet};
-
+use namada_core::collections::{HashMap, HashSet};
 use namada_core::types::address::Address;
 use namada_core::types::key::PublicKeyTmRawHash;
 use namada_core::types::storage::Epoch;

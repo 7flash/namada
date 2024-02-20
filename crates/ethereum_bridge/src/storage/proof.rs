@@ -1,9 +1,8 @@
 //! Proofs over some arbitrary data.
 
-use std::collections::HashMap;
-
 use borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
 use ethers::abi::Tokenizable;
+use namada_core::collections::HashMap;
 use namada_core::types::eth_abi::Encode;
 use namada_core::types::ethereum_events::Uint;
 use namada_core::types::keccak::KeccakHash;

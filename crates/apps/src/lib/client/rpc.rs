@@ -1,7 +1,7 @@
 //! Client RPC queries
 
 use std::cmp::Ordering;
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs::{self, read_dir};
 use std::io;
 use std::iter::Iterator;
@@ -15,6 +15,7 @@ use masp_primitives::merkle_tree::MerklePath;
 use masp_primitives::sapling::{Node, ViewingKey};
 use masp_primitives::transaction::components::I128Sum;
 use masp_primitives::zip32::ExtendedFullViewingKey;
+use namada::core::collections::{HashMap, HashSet};
 use namada::governance::cli::offline::{
     find_offline_proposal, find_offline_votes, read_offline_files,
     OfflineSignedProposal, OfflineVote,

@@ -1,6 +1,5 @@
-use std::collections::{HashMap, HashSet};
-
 use criterion::{criterion_group, criterion_main, Criterion};
+use namada::core::collections::{HashMap, HashSet};
 use namada::core::types::account::AccountPublicKeysMap;
 use namada::core::types::address;
 use namada::ledger::storage::DB;

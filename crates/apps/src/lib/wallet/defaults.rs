@@ -10,9 +10,8 @@ pub use dev::{
 
 #[cfg(any(test, feature = "testing", feature = "benches"))]
 mod dev {
-    use std::collections::HashMap;
-
     use lazy_static::lazy_static;
+    use namada::core::collections::HashMap;
     use namada::ledger::{governance, pgf, pos};
     use namada::types::address::{
         apfel, btc, dot, eth, kartoffel, nam, schnitzel, Address,

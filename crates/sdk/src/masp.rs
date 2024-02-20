@@ -1,7 +1,7 @@
 //! MASP verification wrappers.
 
 use std::cmp::Ordering;
-use std::collections::{btree_map, BTreeMap, BTreeSet, HashMap, HashSet};
+use std::collections::{btree_map, BTreeMap, BTreeSet};
 use std::env;
 use std::fmt::Debug;
 use std::ops::Deref;
@@ -51,6 +51,7 @@ use masp_proofs::bellman::groth16::PreparedVerifyingKey;
 use masp_proofs::bls12_381::Bls12;
 use masp_proofs::prover::LocalTxProver;
 use masp_proofs::sapling::SaplingVerificationContext;
+use namada_core::collections::{HashMap, HashSet};
 use namada_core::types::address::{Address, MASP};
 use namada_core::types::dec::Dec;
 use namada_core::types::masp::{

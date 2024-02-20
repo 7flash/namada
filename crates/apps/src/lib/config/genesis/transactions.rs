@@ -1,6 +1,6 @@
 //! Genesis transactions
 
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Debug;
 use std::net::SocketAddr;
 
@@ -11,6 +11,7 @@ use ledger_namada_rs::NamadaApp;
 use ledger_transport_hid::hidapi::HidApi;
 use ledger_transport_hid::TransportNativeHID;
 use namada::account::AccountPublicKeysMap;
+use namada::core::collections::HashSet;
 use namada::ledger::pos::common::PublicKey;
 use namada::ledger::pos::types::ValidatorMetaData;
 use namada::tx::data::{pos, Fee, TxType};

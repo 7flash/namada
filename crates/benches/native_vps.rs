@@ -1,10 +1,11 @@
 use std::cell::RefCell;
-use std::collections::{BTreeSet, HashMap};
+use std::collections::BTreeSet;
 use std::rc::Rc;
 use std::str::FromStr;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 use masp_primitives::sapling::Node;
+use namada::core::collections::HashMap;
 use namada::core::types::address::{self, Address};
 use namada::eth_bridge::storage::whitelist;
 use namada::governance::pgf::storage::steward::StewardDetail;

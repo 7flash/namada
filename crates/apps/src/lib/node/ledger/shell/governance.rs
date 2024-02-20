@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-
+use namada::core::collections::HashMap;
 use namada::governance::pgf::storage::keys as pgf_storage;
 use namada::governance::pgf::storage::steward::StewardDetail;
 use namada::governance::pgf::{storage as pgf, ADDRESS};

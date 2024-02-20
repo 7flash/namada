@@ -3,7 +3,6 @@
 
 mod raw;
 
-use std::collections::HashMap;
 use std::fmt::{Debug, Display};
 use std::hash::Hash;
 use std::str::FromStr;
@@ -14,6 +13,7 @@ use data_encoding::HEXUPPER;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
+use crate::collections::HashMap;
 use crate::ibc::primitives::Signer;
 use crate::impl_display_and_from_str_via_format;
 use crate::types::ethereum_events::EthAddress;

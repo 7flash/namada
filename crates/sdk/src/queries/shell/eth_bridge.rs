@@ -1,11 +1,11 @@
 //! Ethereum bridge related shell queries.
 
 use std::borrow::Cow;
-use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 
 use borsh::{BorshDeserialize, BorshSerialize};
 use borsh_ext::BorshSerializeExt;
+use namada_core::collections::{HashMap, HashSet};
 use namada_core::hints;
 use namada_core::types::address::Address;
 use namada_core::types::eth_abi::{Encode, EncodeCell};
@@ -261,7 +261,7 @@ where
         });
     } else {
         for hash in store.keys() {
-            if transfer_hashes.remove(hash) {
+            if transfer_hashes.swap_remove(hash) {
                 status.pending.insert(hash.clone());
             }
             if transfer_hashes.is_empty() {
@@ -300,7 +300,7 @@ where
             .as_str()
             .try_into()
             .expect("We must have a valid KeccakHash");
-        if !transfer_hashes.remove(&tx_hash) {
+        if !transfer_hashes.swap_remove(&tx_hash) {
             return None;
         }
         Some((tx_hash, is_relayed, transfer_hashes.is_empty()))

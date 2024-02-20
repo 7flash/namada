@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use namada_core::borsh::{BorshDeserialize, BorshSerialize};
+use namada_core::collections::HashMap;
 use namada_core::types::address::Address;
 use namada_core::types::dec::Dec;
 use serde::{Deserialize, Serialize};
@@ -47,7 +46,7 @@ pub mod tests {
         ) -> UpdateStewardCommission {
             UpdateStewardCommission {
                 steward,
-                commission,
+                commission: commission.into_iter().collect(),
             }
         }
     }

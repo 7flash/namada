@@ -1,8 +1,9 @@
 //! PoS system tests
 
-use std::collections::{BTreeMap, HashSet};
+use std::collections::BTreeMap;
 
 use assert_matches::assert_matches;
+use namada_core::collections::HashSet;
 use namada_core::types::address::Address;
 use namada_core::types::dec::Dec;
 use namada_core::types::key::testing::{
@@ -225,7 +226,7 @@ fn test_test_init_genesis_aux(
     for (i, validator) in validators.into_iter().enumerate() {
         let addr = &validator.address;
         let self_bonds = bond_details
-            .remove(&BondId {
+            .swap_remove(&BondId {
                 source: addr.clone(),
                 validator: addr.clone(),
             })

@@ -1,9 +1,9 @@
 //! Structures encapsulating SDK arguments
 
-use std::collections::HashMap;
 use std::path::PathBuf;
 use std::time::Duration as StdDuration;
 
+use namada_core::collections::HashMap;
 use namada_core::types::address::Address;
 use namada_core::types::chain::ChainId;
 use namada_core::types::dec::Dec;

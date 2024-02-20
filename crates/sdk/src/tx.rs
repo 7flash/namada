@@ -1,7 +1,7 @@
 //! SDK functions to construct different types of transactions
 
 use std::borrow::Cow;
-use std::collections::{BTreeMap, HashSet};
+use std::collections::BTreeMap;
 use std::fs::File;
 use std::path::{Path, PathBuf};
 use std::time::Duration;
@@ -19,6 +19,7 @@ use masp_primitives::transaction::components::transparent::fees::{
 };
 use masp_primitives::transaction::components::I128Sum;
 use namada_account::{InitAccount, UpdateAccount};
+use namada_core::collections::HashSet;
 use namada_core::ibc::apps::transfer::types::msgs::transfer::MsgTransfer;
 use namada_core::ibc::apps::transfer::types::packet::PacketData;
 use namada_core::ibc::apps::transfer::types::PrefixedCoin;

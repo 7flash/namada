@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use std::fs::File;
 use std::io::Write;
 
@@ -7,6 +6,7 @@ use borsh_ext::BorshSerializeExt;
 use ledger_namada_rs::{BIP44Path, NamadaApp};
 use ledger_transport_hid::hidapi::HidApi;
 use ledger_transport_hid::TransportNativeHID;
+use namada::core::collections::HashSet;
 use namada::governance::cli::offline::{
     OfflineProposal, OfflineSignedProposal, OfflineVote,
 };

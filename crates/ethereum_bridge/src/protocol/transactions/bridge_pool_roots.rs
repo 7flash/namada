@@ -1,6 +1,5 @@
-use std::collections::{HashMap, HashSet};
-
 use eyre::Result;
+use namada_core::collections::{HashMap, HashSet};
 use namada_core::types::address::Address;
 use namada_core::types::keccak::keccak_hash;
 use namada_core::types::key::{common, SignableEthMessage};

@@ -1,9 +1,10 @@
 //! Write log is temporary storage for modifications performed by a transaction.
 //! before they are committed to the ledger's storage.
 
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet};
 
 use itertools::Itertools;
+use namada_core::collections::{HashMap, HashSet};
 use namada_core::ledger::replay_protection;
 use namada_core::types::address::{
     Address, EstablishedAddressGen, InternalAddress,
@@ -1134,6 +1135,7 @@ pub mod testing {
                 arb_storage_modification(can_init_account),
                 0..100,
             )
+            .prop_map(|map| map.into_iter().collect())
         })
     }
 

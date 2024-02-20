@@ -1,8 +1,8 @@
-use std::collections::HashMap;
 use std::str::FromStr;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 use namada::account::{InitAccount, UpdateAccount};
+use namada::core::collections::HashMap;
 use namada::core::types::key::{
     common, SecretKey as SecretKeyInterface, SigScheme,
 };

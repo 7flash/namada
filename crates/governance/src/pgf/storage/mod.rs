@@ -5,8 +5,7 @@ pub mod keys;
 /// Pgf steward structures
 pub mod steward;
 
-use std::collections::HashMap;
-
+use namada_core::collections::HashMap;
 use namada_core::types::address::Address;
 use namada_core::types::dec::Dec;
 use namada_state::{StorageRead, StorageResult, StorageWrite};

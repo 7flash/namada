@@ -50,10 +50,9 @@ fn new_blake2b() -> Blake2b {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
-
     use borsh::BorshDeserialize;
     use itertools::Itertools;
+    use namada::core::collections::HashMap;
     use namada::eth_bridge::storage::proof::BridgePoolRootProof;
     use namada::ledger::eth_bridge::storage::bridge_pool;
     use namada::ledger::gas::STORAGE_ACCESS_GAS_PER_BYTE;

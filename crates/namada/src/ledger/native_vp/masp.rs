@@ -1,7 +1,7 @@
 //! MASP native VP
 
 use std::cmp::Ordering;
-use std::collections::{BTreeSet, HashMap, HashSet};
+use std::collections::BTreeSet;
 
 use borsh_ext::BorshSerializeExt;
 use masp_primitives::asset_type::AssetType;
@@ -9,6 +9,7 @@ use masp_primitives::merkle_tree::CommitmentTree;
 use masp_primitives::sapling::Node;
 use masp_primitives::transaction::components::I128Sum;
 use masp_primitives::transaction::Transaction;
+use namada_core::collections::{HashMap, HashSet};
 use namada_core::types::address::Address;
 use namada_core::types::address::InternalAddress::Masp;
 use namada_core::types::masp::encode_asset_type;

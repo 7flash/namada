@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::future::poll_fn;
 use std::mem::ManuallyDrop;
 use std::path::PathBuf;
@@ -10,6 +9,7 @@ use color_eyre::eyre::{Report, Result};
 use data_encoding::HEXUPPER;
 use itertools::Either;
 use lazy_static::lazy_static;
+use namada::core::collections::HashMap;
 use namada::eth_bridge::oracle::config::Config as OracleConfig;
 use namada::ledger::dry_run_tx;
 use namada::ledger::events::log::dumb_queries;

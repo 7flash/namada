@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-
+use namada_sdk::collections::HashMap;
 use namada_sdk::tx::data::GasLimit;
 use namada_sdk::tx::{Signature, Tx, TxError};
 use namada_sdk::types::address::Address;

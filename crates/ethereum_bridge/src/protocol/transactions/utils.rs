@@ -1,7 +1,8 @@
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet};
 
 use eyre::eyre;
 use itertools::Itertools;
+use namada_core::collections::{HashMap, HashSet};
 use namada_core::types::address::Address;
 use namada_core::types::storage::BlockHeight;
 use namada_core::types::token;
@@ -120,9 +121,8 @@ pub(super) fn get_voting_powers_for_selected(
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashSet;
-
     use assert_matches::assert_matches;
+    use namada_core::collections::HashSet;
     use namada_core::types::address;
     use namada_core::types::ethereum_events::testing::arbitrary_bonded_stake;
     use namada_core::types::voting_power::FractionalVotingPower;

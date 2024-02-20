@@ -2,9 +2,9 @@
 
 use core::fmt::Debug;
 use core::hash::Hash;
-use std::collections::HashMap;
 
 use namada_core::borsh::{BorshDeserialize, BorshSerialize};
+use namada_core::collections::HashMap;
 use namada_core::types::storage;
 use namada_storage::collections::lazy_map::{LazyMap, NestedSubKey, SubKey};
 use namada_storage::collections::{Nested, Simple};

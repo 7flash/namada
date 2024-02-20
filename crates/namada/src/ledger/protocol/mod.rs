@@ -1147,10 +1147,9 @@ fn merge_vp_results(
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
-
     use borsh::BorshDeserialize;
     use eyre::Result;
+    use namada_core::collections::HashMap;
     use namada_core::types::chain::ChainId;
     use namada_core::types::ethereum_events::testing::DAI_ERC20_ETH_ADDRESS;
     use namada_core::types::ethereum_events::{

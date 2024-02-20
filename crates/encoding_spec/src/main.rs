@@ -15,7 +15,7 @@
 #![deny(rustdoc::broken_intra_doc_links)]
 #![deny(rustdoc::private_intra_doc_links)]
 
-use std::collections::{BTreeMap, HashSet};
+use std::collections::BTreeMap;
 use std::io::Write;
 use std::iter::Extend;
 
@@ -25,6 +25,7 @@ use itertools::Itertools;
 use lazy_static::lazy_static;
 use madato::types::TableRow;
 use namada::account;
+use namada::core::collections::HashSet;
 use namada::ledger::parameters::Parameters;
 use namada::tx::data::{pos, TxType, WrapperTx};
 use namada::types::address::Address;

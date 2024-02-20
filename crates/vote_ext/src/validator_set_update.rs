@@ -1,10 +1,10 @@
 //! Contains types necessary for processing validator set updates
 //! in vote extensions.
 use std::cmp::Ordering;
-use std::collections::HashMap;
 use std::ops::Deref;
 
 use namada_core::borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
+use namada_core::collections::HashMap;
 use namada_core::types::address::Address;
 use namada_core::types::eth_abi::{AbiEncode, Encode, Token};
 use namada_core::types::ethereum_events::EthAddress;

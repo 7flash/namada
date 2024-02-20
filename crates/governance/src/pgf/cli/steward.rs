@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-
+use namada_core::collections::HashMap;
 use namada_core::types::address::Address;
 use namada_core::types::dec::Dec;
 use serde::{Deserialize, Serialize};

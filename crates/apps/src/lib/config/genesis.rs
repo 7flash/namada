@@ -5,12 +5,13 @@ pub mod templates;
 pub mod transactions;
 pub mod utils;
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 
 use borsh::{BorshDeserialize, BorshSerialize};
 use derivative::Derivative;
+use namada::core::collections::HashMap;
 use namada::governance::parameters::GovernanceParameters;
 use namada::governance::pgf::parameters::PgfParameters;
 use namada::ledger::eth_bridge::EthereumBridgeParams;

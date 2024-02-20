@@ -1,12 +1,13 @@
 //! Wallet Store information
 
-use std::collections::{BTreeMap, HashSet};
+use std::collections::BTreeMap;
 use std::fmt::Display;
 use std::str::FromStr;
 
 use bimap::BiBTreeMap;
 use itertools::Itertools;
 use masp_primitives::zip32;
+use namada_core::collections::HashSet;
 use namada_core::types::address::{Address, ImplicitAddress};
 use namada_core::types::key::*;
 use namada_core::types::masp::{

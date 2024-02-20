@@ -1,9 +1,10 @@
 //! PoS functions for reading and writing to storage and lazy collection handles
 //! associated with given `storage_key`s.
 
-use std::collections::{BTreeSet, HashSet};
+use std::collections::BTreeSet;
 
 use namada_account::protocol_pk_key;
+use namada_core::collections::HashSet;
 use namada_core::types::address::Address;
 use namada_core::types::dec::Dec;
 use namada_core::types::key::{common, tm_consensus_key_raw_hash};

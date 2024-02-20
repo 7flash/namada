@@ -1,5 +1,5 @@
 //! Functions to sign transactions
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::BTreeMap;
 use std::fmt::Display;
 
 use borsh::BorshDeserialize;
@@ -12,6 +12,7 @@ use masp_primitives::transaction::components::sapling::fees::{
 };
 use masp_primitives::transaction::Transaction;
 use namada_account::{AccountPublicKeysMap, InitAccount, UpdateAccount};
+use namada_core::collections::{HashMap, HashSet};
 use namada_core::types::address::{
     Address, ImplicitAddress, InternalAddress, MASP,
 };

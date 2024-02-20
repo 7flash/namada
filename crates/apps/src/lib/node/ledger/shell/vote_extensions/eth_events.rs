@@ -1,11 +1,12 @@
 //! Extend Tendermint votes with Ethereum events seen by a quorum of validators.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 use namada::state::{DBIter, StorageHasher, DB};
 use namada::tx::Signed;
 use namada::types::ethereum_events::EthereumEvent;
 use namada::vote_ext::ethereum_events::{self, MultiSignedEthEvent};
+use namada_sdk::collections::HashMap;
 use namada_sdk::eth_bridge::EthBridgeQueries;
 
 use super::*;

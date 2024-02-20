@@ -1,9 +1,9 @@
-use std::collections::HashSet;
 use std::path::Path;
 
 use eyre::Context;
 use ledger_namada_rs::NamadaApp;
 use ledger_transport_hid::TransportNativeHID;
+use namada::core::collections::HashSet;
 use namada::tx::Tx;
 use namada::types::key::common;
 use namada_sdk::wallet::Wallet;

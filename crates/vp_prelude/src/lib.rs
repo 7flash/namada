@@ -14,13 +14,14 @@ pub mod ibc {
 // used in the VP input
 use core::convert::AsRef;
 use core::slice;
-pub use std::collections::{BTreeSet, HashSet};
+pub use std::collections::BTreeSet;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
 
 pub use namada_core::borsh::{
     BorshDeserialize, BorshSerialize, BorshSerializeExt,
 };
+pub use namada_core::collections::HashSet;
 pub use namada_core::types::address::Address;
 use namada_core::types::chain::CHAIN_ID_LENGTH;
 use namada_core::types::hash::{Hash, HASH_LENGTH};

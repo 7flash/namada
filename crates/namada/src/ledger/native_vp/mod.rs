@@ -692,9 +692,8 @@ where
 
 #[cfg(any(test, feature = "testing"))]
 pub(super) mod testing {
-    use std::collections::HashMap;
-
     use borsh::BorshDeserialize;
+    use namada_core::collections::HashMap;
 
     use super::*;
 

@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use borsh::{BorshDeserialize, BorshSerialize};
+use namada_core::collections::HashMap;
 use namada_core::types::address::Address;
 use namada_core::types::dec::Dec;
 

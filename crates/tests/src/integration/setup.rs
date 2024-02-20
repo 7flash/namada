@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::mem::ManuallyDrop;
 use std::path::Path;
 use std::str::FromStr;
@@ -23,6 +22,7 @@ use namada_apps::node::ledger::shell::testing::node::{
 use namada_apps::node::ledger::shell::testing::utils::TestDir;
 use namada_apps::node::ledger::shell::Shell;
 use namada_apps::wallet::pre_genesis;
+use namada_core::collections::HashMap;
 use namada_core::types::chain::ChainIdPrefix;
 use namada_sdk::wallet::alias::Alias;
 

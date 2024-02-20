@@ -3,11 +3,12 @@
 mod eth_msgs;
 mod events;
 
-use std::collections::{BTreeSet, HashMap, HashSet};
+use std::collections::BTreeSet;
 
 use borsh::BorshDeserialize;
 use eth_msgs::EthMsgUpdate;
 use eyre::Result;
+use namada_core::collections::{HashMap, HashSet};
 use namada_core::types::address::Address;
 use namada_core::types::ethereum_events::EthereumEvent;
 use namada_core::types::ethereum_structs::EthBridgeEvent;
@@ -334,9 +335,10 @@ where
 
 #[cfg(test)]
 mod tests {
-    use std::collections::{BTreeSet, HashMap, HashSet};
+    use std::collections::BTreeSet;
 
     use borsh::BorshDeserialize;
+    use namada_core::collections::{HashMap, HashSet};
     use namada_core::types::address;
     use namada_core::types::ethereum_events::testing::{
         arbitrary_amount, arbitrary_eth_address, arbitrary_nonce,

@@ -518,9 +518,9 @@ where
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
     use std::str::FromStr;
 
+    use namada_core::collections::HashMap;
     use namada_core::types::address;
     use namada_core::types::dec::testing::arb_non_negative_dec;
     use namada_core::types::time::DurationSecs;

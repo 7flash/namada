@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::fmt::Display;
 use std::fs::{create_dir_all, File, OpenOptions};
@@ -27,6 +26,7 @@ use namada_apps::config::genesis::utils::read_toml;
 use namada_apps::config::genesis::{templates, transactions, GenesisAddress};
 use namada_apps::config::{ethereum_bridge, genesis, Config};
 use namada_apps::{config, wallet};
+use namada_core::collections::HashMap;
 use namada_core::types::address::Address;
 use namada_core::types::key::{RefTo, SchemeType};
 use namada_core::types::string_encoding::StringEncoded;

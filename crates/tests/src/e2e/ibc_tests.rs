@@ -12,7 +12,7 @@
 use core::convert::TryFrom;
 use core::str::FromStr;
 use core::time::Duration;
-use std::collections::{BTreeSet, HashMap};
+use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
 use color_eyre::eyre::Result;
@@ -78,6 +78,7 @@ use namada_apps::config::{ethereum_bridge, TendermintMode};
 use namada_apps::facade::tendermint::block::Header as TmHeader;
 use namada_apps::facade::tendermint::merkle::proof::ProofOps as TmProof;
 use namada_apps::facade::tendermint_rpc::{Client, HttpClient, Url};
+use namada_core::collections::HashMap;
 use namada_core::types::string_encoding::StringEncoded;
 use namada_sdk::masp::fs::FsShieldedUtils;
 use prost::Message;

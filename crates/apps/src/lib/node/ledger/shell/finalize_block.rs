@@ -858,11 +858,12 @@ fn pos_votes_from_abci(
 /// are covered by the e2e tests.
 #[cfg(test)]
 mod test_finalize_block {
-    use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+    use std::collections::{BTreeMap, BTreeSet};
     use std::num::NonZeroU64;
     use std::str::FromStr;
 
     use data_encoding::HEXUPPER;
+    use namada::core::collections::{HashMap, HashSet};
     use namada::core::ledger::replay_protection;
     use namada::eth_bridge::storage::bridge_pool::{
         self, get_key_from_hash, get_nonce_key, get_signed_root_key,
@@ -4896,12 +4897,9 @@ mod test_finalize_block {
         )?;
         assert_eq!(
             consensus_vals,
-            HashSet::from_iter([
-                val1.clone(),
-                val2.clone(),
-                val3.clone(),
-                val4.clone()
-            ])
+            [val1.clone(), val2.clone(), val3.clone(), val4.clone()]
+                .into_iter()
+                .collect::<HashSet<_>>(),
         );
         for offset in 1..=params.pipeline_len {
             let consensus_vals = read_consensus_validator_set_addresses(
@@ -4910,7 +4908,9 @@ mod test_finalize_block {
             )?;
             assert_eq!(
                 consensus_vals,
-                HashSet::from_iter([val1.clone(), val3.clone(), val4.clone()])
+                [val1.clone(), val3.clone(), val4.clone()]
+                    .into_iter()
+                    .collect::<HashSet<_>>()
             );
             let val2_state = validator_state_handle(&val2)
                 .get(&shell.wl_storage, current_epoch + offset, &params)?

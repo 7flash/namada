@@ -3,13 +3,14 @@
 mod rev_order;
 
 use core::fmt::Debug;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 use std::convert::TryFrom;
 use std::fmt::Display;
 use std::hash::Hash;
 use std::ops::Sub;
 
 use borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
+use namada_core::collections::HashMap;
 use namada_core::types::address::Address;
 use namada_core::types::dec::Dec;
 use namada_core::types::key::common;

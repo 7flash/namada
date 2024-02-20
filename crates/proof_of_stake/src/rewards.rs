@@ -1,7 +1,6 @@
 //! PoS rewards distribution.
 
-use std::collections::{HashMap, HashSet};
-
+use namada_core::collections::{HashMap, HashSet};
 use namada_core::ledger::inflation;
 use namada_core::types::address::{self, Address};
 use namada_core::types::dec::Dec;

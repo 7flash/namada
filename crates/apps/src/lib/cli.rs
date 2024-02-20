@@ -2925,13 +2925,13 @@ pub mod cmds {
 }
 
 pub mod args {
-    use std::collections::HashMap;
     use std::convert::TryFrom;
     use std::env;
     use std::net::SocketAddr;
     use std::path::PathBuf;
     use std::str::FromStr;
 
+    use namada::core::collections::HashMap;
     use namada::ibc::core::host::types::identifiers::{ChannelId, PortId};
     use namada::tx::data::GasLimit;
     use namada::types::address::{Address, EstablishedAddress};
