@@ -17,3 +17,19 @@ pub mod borsh {
     pub use borsh::*;
     pub use borsh_ext::*;
 }
+
+#[allow(missing_docs)]
+pub mod collections {
+    //! Re-exports of collection types.
+
+    pub mod hash_map {
+        pub use indexmap::map::{IndexMap as HashMap, *};
+    }
+
+    pub mod hash_set {
+        pub use indexmap::set::{IndexSet as HashSet, *};
+    }
+
+    pub use hash_map::HashMap;
+    pub use hash_set::HashSet;
+}
