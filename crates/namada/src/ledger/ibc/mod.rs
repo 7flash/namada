@@ -1,10 +1,14 @@
 //! IBC integration
 
-pub use namada_ibc::storage;
+use namada_core::types::token::Amount;
 use namada_ibc::storage::{
     channel_counter_key, client_counter_key, connection_counter_key,
+    deposit_prefix, withdraw_prefix,
 };
-use namada_state::{StorageHasher, StorageWrite, WlStorage};
+pub use namada_ibc::{parameters, storage};
+use namada_state::{
+    Key, StorageError, StorageHasher, StorageRead, StorageWrite, WlStorage,
+};
 
 /// Initialize storage in the genesis block.
 pub fn init_genesis_storage<DB, H>(storage: &mut WlStorage<DB, H>)
@@ -34,4 +38,27 @@ where
     storage
         .write(&key, init_value)
         .expect("Unable to write the initial channel counter");
+}
+
+/// Clear the per-epoch throughputs (deposit and withdraw)
+pub fn clear_throughputs<DB, H>(
+    storage: &mut WlStorage<DB, H>,
+) -> Result<(), StorageError>
+where
+    DB: namada_state::DB + for<'iter> namada_state::DBIter<'iter> + 'static,
+    H: StorageHasher + 'static,
+{
+    for prefix in [deposit_prefix(), withdraw_prefix()] {
+        let keys: Vec<Key> = storage
+            .iter_prefix(&prefix)?
+            .map(|(key, _, _)| {
+                Key::parse(key).expect("The key should be parsable")
+            })
+            .collect();
+        for key in keys {
+            storage.write(&key, Amount::from(0))?;
+        }
+    }
+
+    Ok(())
 }

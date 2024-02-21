@@ -49,6 +49,7 @@ pub use namada::ibc::core::host::types::identifiers::{
 use namada::ibc::primitives::proto::{Any, Protobuf};
 use namada::ibc::primitives::Timestamp;
 use namada::ledger::gas::VpGasMeter;
+use namada::ledger::ibc::parameters::IbcParameters;
 pub use namada::ledger::ibc::storage::{
     ack_key, channel_counter_key, channel_key, client_counter_key,
     client_state_key, client_update_height_key, client_update_timestamp_key,
@@ -212,6 +213,11 @@ pub fn init_storage() -> (Address, Address) {
         ibc::init_genesis_storage(&mut env.wl_storage);
         let gov_params = GovernanceParameters::default();
         gov_params.init_storage(&mut env.wl_storage).unwrap();
+        let ibc_params = IbcParameters {
+            default_mint_limit: Amount::native_whole(100),
+            default_per_epoch_throughput_limit: Amount::native_whole(100),
+        };
+        ibc_params.init_storage(&mut env.wl_storage).unwrap();
         pos::test_utils::test_init_genesis(
             &mut env.wl_storage,
             OwnedPosParams::default(),

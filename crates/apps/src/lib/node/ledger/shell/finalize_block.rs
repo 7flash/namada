@@ -6,6 +6,7 @@ use masp_primitives::sapling::Node;
 use namada::governance::pgf::inflation as pgf_inflation;
 use namada::ledger::events::EventType;
 use namada::ledger::gas::{GasMetering, TxGasMeter};
+use namada::ledger::ibc;
 use namada::ledger::pos::namada_proof_of_stake;
 use namada::ledger::protocol::{self, WrapperArgs};
 use namada::proof_of_stake::storage::{
@@ -119,6 +120,8 @@ where
                 &mut self.wl_storage,
                 current_epoch,
             )?;
+
+            ibc::clear_throughputs(&mut self.wl_storage)?;
         }
 
         // Get the actual votes from cometBFT in the preferred format
