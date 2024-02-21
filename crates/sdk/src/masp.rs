@@ -653,7 +653,7 @@ impl<U: ShieldedUtils + MaybeSend + MaybeSync> ShieldedContext<U> {
                 ..Default::default()
             };
             for vk in unknown_keys {
-                tx_ctx.pos_map.entry(vk).or_insert_with(BTreeSet::new);
+                tx_ctx.pos_map.entry(vk).or_default();
             }
             // Update this unknown shielded context until it is level with self
             while tx_ctx.last_indexed != self.last_indexed {
@@ -1237,7 +1237,7 @@ impl<U: ShieldedUtils + MaybeSend + MaybeSync> ShieldedContext<U> {
             let Some(denom) = query_denom(context.client(), token).await else {
                 return Err(Error::Query(QueryError::General(format!(
                     "denomination for token {token}"
-                ))))
+                ))));
             };
             for position in MaspDigitPos::iter() {
                 let asset_type =
@@ -1304,7 +1304,10 @@ impl<U: ShieldedUtils + MaybeSend + MaybeSync> ShieldedContext<U> {
         {
             // Query for the ID of the last accepted transaction
             let Some((token, denom, position, ep, conv, path)) =
-                query_conversion(client, asset_type).await else { return };
+                query_conversion(client, asset_type).await
+            else {
+                return;
+            };
             self.asset_types.insert(
                 asset_type,
                 AssetData {
@@ -1968,9 +1971,9 @@ impl<U: ShieldedUtils + MaybeSend + MaybeSync> ShieldedContext<U> {
 
         // Convert transaction amount into MASP types
         let Some(denom) = query_denom(context.client(), token).await else {
-            return Err(TransferErr::General(Error::from(QueryError::General(format!(
-                "denomination for token {token}"
-            )))))
+            return Err(TransferErr::General(Error::from(
+                QueryError::General(format!("denomination for token {token}")),
+            )));
         };
         let (asset_types, masp_amount) = {
             let mut shielded = context.shielded_mut().await;
@@ -2796,18 +2799,13 @@ pub mod testing {
     use std::ops::AddAssign;
     use std::sync::Mutex;
 
-    use masp_primitives::asset_type::AssetType;
     use masp_primitives::consensus::testing::arb_height;
     use masp_primitives::constants::SPENDING_KEY_GENERATOR;
-    use masp_primitives::convert::AllowedConversion;
     use masp_primitives::ff::Field;
-    use masp_primitives::merkle_tree::MerklePath;
     use masp_primitives::sapling::prover::TxProver;
-    use masp_primitives::sapling::redjubjub::{PublicKey, Signature};
-    use masp_primitives::sapling::{
-        Diversifier, Node, PaymentAddress, ProofGenerationKey, Rseed,
-    };
-    use masp_primitives::transaction::components::{I128Sum, GROTH_PROOF_SIZE};
+    use masp_primitives::sapling::redjubjub::Signature;
+    use masp_primitives::sapling::{PaymentAddress, ProofGenerationKey, Rseed};
+    use masp_primitives::transaction::components::GROTH_PROOF_SIZE;
     use proptest::collection::SizeRange;
     use proptest::prelude::*;
     use proptest::test_runner::TestRng;

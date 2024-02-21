@@ -35,10 +35,17 @@ use thiserror::Error;
 pub trait SubTreeRead {
     /// Get the root of a subtree in raw bytes.
     fn root(&self) -> MerkleRoot;
+
+    /// Recompute the merkle root from the backing storage
+    /// and check it matches the saved root.
+    fn validate(&self) -> bool;
+
     /// Check if a key is present in the sub-tree
     fn subtree_has_key(&self, key: &Key) -> Result<bool>;
+
     /// Get the height at which the key is inserted
     fn subtree_get(&self, key: &Key) -> Result<Vec<u8>>;
+
     /// Get a membership proof for various key-value pairs
     fn subtree_membership_proof(
         &self,
@@ -257,7 +264,7 @@ impl StoreType {
         if key.is_empty() {
             return Err(Error::EmptyKey("the key is empty".to_owned()));
         }
-        match key.segments.get(0) {
+        match key.segments.first() {
             Some(DbKeySeg::AddressSeg(Address::Internal(internal))) => {
                 match internal {
                     InternalAddress::PoS | InternalAddress::PosSlashPool => {
@@ -507,6 +514,37 @@ impl<H: StorageHasher + Default> MerkleTree<H> {
     /// Get the root
     pub fn root(&self) -> MerkleRoot {
         self.base.root().into()
+    }
+
+    /// Recalculate the merkle tree root of storage and compare it against the
+    /// old value.
+    pub fn validate(&self) -> Result<bool> {
+        if self.account.validate()
+            && self.ibc.validate()
+            && self.pos.validate()
+            && self.bridge_pool.validate()
+        {
+            let mut reconstructed = Smt::<H>::default();
+            reconstructed.update(
+                H::hash(StoreType::Account.to_string()).into(),
+                self.account.root().into(),
+            )?;
+            reconstructed.update(
+                H::hash(StoreType::PoS.to_string()).into(),
+                self.pos.root().into(),
+            )?;
+            reconstructed.update(
+                H::hash(StoreType::Ibc.to_string()).into(),
+                self.ibc.root().into(),
+            )?;
+            reconstructed.update(
+                H::hash(StoreType::BridgePool.to_string()).into(),
+                self.bridge_pool.root().into(),
+            )?;
+            Ok(self.base.root() == reconstructed.root())
+        } else {
+            Ok(false)
+        }
     }
 
     /// Get the root of a sub-tree
@@ -819,6 +857,10 @@ impl<'a, H: StorageHasher + Default> SubTreeRead for &'a Smt<H> {
         Smt::<H>::root(self).into()
     }
 
+    fn validate(&self) -> bool {
+        Smt::<H>::validate(self)
+    }
+
     fn subtree_has_key(&self, key: &Key) -> Result<bool> {
         match self.get(&H::hash(key.to_string()).into()) {
             Ok(hash) => Ok(!hash.is_zero()),
@@ -884,6 +926,10 @@ impl<'a, H: StorageHasher + Default> SubTreeWrite for &'a mut Smt<H> {
 impl<'a, H: StorageHasher + Default> SubTreeRead for &'a Amt<H> {
     fn root(&self) -> MerkleRoot {
         Amt::<H>::root(self).into()
+    }
+
+    fn validate(&self) -> bool {
+        Amt::<H>::validate(self)
     }
 
     fn subtree_has_key(&self, key: &Key) -> Result<bool> {
@@ -955,6 +1001,10 @@ impl<'a> SubTreeRead for &'a BridgePoolTree {
         BridgePoolTree::root(self).into()
     }
 
+    fn validate(&self) -> bool {
+        BridgePoolTree::validate(self)
+    }
+
     fn subtree_has_key(&self, key: &Key) -> Result<bool> {
         self.contains_key(key)
             .map_err(|err| Error::MerkleTree(err.to_string()))
@@ -1005,7 +1055,6 @@ impl<'a> SubTreeWrite for &'a mut BridgePoolTree {
 mod test {
     use ics23::HostFunctionsManager;
     use namada_core::types::hash::Sha256Hasher;
-    use namada_core::types::storage::KeySeg;
 
     use super::*;
     use crate::ics23_specs::{ibc_proof_specs, proof_specs};
@@ -1122,6 +1171,37 @@ mod test {
     }
 
     #[test]
+    fn test_validate_root() {
+        let mut tree = MerkleTree::<Sha256Hasher>::default();
+
+        let key_prefix: Key =
+            Address::Internal(InternalAddress::Ibc).to_db_key().into();
+        let ibc_key = key_prefix.push(&"test".to_string()).unwrap();
+        let key_prefix: Key =
+            Address::Internal(InternalAddress::PoS).to_db_key().into();
+        let pos_key = key_prefix.push(&"test".to_string()).unwrap();
+        let account_key_prefix: Key =
+            Address::Internal(InternalAddress::Masp).to_db_key().into();
+        let account_key = account_key_prefix.push(&"test".to_string()).unwrap();
+
+        let ibc_val = [1u8; 8].to_vec();
+        tree.update(&ibc_key, ibc_val.clone()).unwrap();
+        let pos_val = [2u8; 8].to_vec();
+        tree.update(&pos_key, pos_val).unwrap();
+        let account_val = [3u8; 16].to_vec();
+        tree.update(&account_key, account_val).unwrap();
+
+        assert!(tree.validate().expect("Test failed"));
+        let (store_type, sub_key) =
+            StoreType::sub_key(&ibc_key).expect("Test failed");
+        _ = tree
+            .tree_mut(&store_type)
+            .subtree_update(&sub_key, [2u8; 8].as_ref())
+            .expect("Test failed");
+        assert!(!tree.validate().expect("Test failed"));
+    }
+
+    #[test]
     fn test_ibc_existence_proof() {
         let mut tree = MerkleTree::<Sha256Hasher>::default();
 
@@ -1150,7 +1230,7 @@ mod test {
         };
         let proof = tree.get_sub_tree_proof(&ibc_key, proof).unwrap();
         let (store_type, sub_key) = StoreType::sub_key(&ibc_key).unwrap();
-        let paths = vec![sub_key.to_string(), store_type.to_string()];
+        let paths = [sub_key.to_string(), store_type.to_string()];
         let mut sub_root = ibc_val.clone();
         let mut value = ibc_val;
         // First, the sub proof is verified. Next the base proof is verified
@@ -1214,7 +1294,7 @@ mod test {
 
         let proof = tree.get_sub_tree_proof(&pos_key, proof).unwrap();
         let (store_type, sub_key) = StoreType::sub_key(&pos_key).unwrap();
-        let paths = vec![sub_key.to_string(), store_type.to_string()];
+        let paths = [sub_key.to_string(), store_type.to_string()];
         let mut sub_root = pos_val.clone();
         let mut value = pos_val;
         // First, the sub proof is verified. Next the base proof is verified
