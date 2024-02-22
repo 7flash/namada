@@ -208,7 +208,7 @@ mod tests {
             is_merklized_storage_key,
         );
         storage
-            .load_last_state()
+            .load_last_state(true)
             .expect("loading the last state failed");
         let (loaded_root, height) =
             storage.get_state().expect("no block exists");

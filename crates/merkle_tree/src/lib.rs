@@ -110,6 +110,10 @@ pub enum Error {
     Ics23MultiLeaf,
     #[error("A Tendermint proof can only be constructed from an ICS23 proof.")]
     TendermintProof,
+    #[error(
+        "The merklized data did not produce that same hash as the stored root."
+    )]
+    RootValidationError,
 }
 
 /// Result for functions that may fail
@@ -518,7 +522,7 @@ impl<H: StorageHasher + Default> MerkleTree<H> {
 
     /// Recalculate the merkle tree root of storage and compare it against the
     /// old value.
-    pub fn validate(&self) -> Result<bool> {
+    pub fn validate(&self) -> Result<()> {
         if self.account.validate()
             && self.ibc.validate()
             && self.pos.validate()
@@ -541,9 +545,13 @@ impl<H: StorageHasher + Default> MerkleTree<H> {
                 H::hash(StoreType::BridgePool.to_string()).into(),
                 self.bridge_pool.root().into(),
             )?;
-            Ok(self.base.root() == reconstructed.root())
+            if self.base.root() == reconstructed.root() {
+                Ok(())
+            } else {
+                Err(Error::RootValidationError)
+            }
         } else {
-            Ok(false)
+            Err(Error::RootValidationError)
         }
     }
 
@@ -1053,6 +1061,7 @@ impl<'a> SubTreeWrite for &'a mut BridgePoolTree {
 
 #[cfg(test)]
 mod test {
+    use assert_matches::assert_matches;
     use ics23::HostFunctionsManager;
     use namada_core::types::hash::Sha256Hasher;
 
@@ -1191,14 +1200,17 @@ mod test {
         let account_val = [3u8; 16].to_vec();
         tree.update(&account_key, account_val).unwrap();
 
-        assert!(tree.validate().expect("Test failed"));
+        assert!(tree.validate().is_ok());
         let (store_type, sub_key) =
             StoreType::sub_key(&ibc_key).expect("Test failed");
         _ = tree
             .tree_mut(&store_type)
             .subtree_update(&sub_key, [2u8; 8].as_ref())
             .expect("Test failed");
-        assert!(!tree.validate().expect("Test failed"));
+        assert_matches!(
+            tree.validate().unwrap_err(),
+            Error::RootValidationError
+        );
     }
 
     #[test]

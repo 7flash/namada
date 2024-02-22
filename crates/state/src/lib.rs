@@ -222,7 +222,7 @@ where
 
     /// Load the full state at the last committed height, if any. Returns the
     /// Merkle root hash and the height of the committed block.
-    pub fn load_last_state(&mut self) -> Result<()> {
+    pub fn load_last_state(&mut self, validate: bool) -> Result<()> {
         if let Some(BlockStateRead {
             merkle_tree_stores,
             hash,
@@ -255,6 +255,9 @@ where
             // Rebuild Merkle tree
             self.block.tree = MerkleTree::new(merkle_tree_stores)
                 .or_else(|_| self.rebuild_full_merkle_tree(height))?;
+            if validate {
+                self.block.tree.validate().map_err(Error::MerkleTreeError)?;
+            }
             self.conversion_state = conversion_state;
             self.tx_queue = tx_queue;
             self.ethereum_height = ethereum_height;

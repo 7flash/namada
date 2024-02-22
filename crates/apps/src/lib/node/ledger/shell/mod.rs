@@ -439,7 +439,7 @@ where
             is_merklized_storage_key,
         );
         storage
-            .load_last_state()
+            .load_last_state(config.shell.validate_merkle_tree)
             .map_err(|e| {
                 tracing::error!("Cannot load the last state from the DB {}", e);
             })

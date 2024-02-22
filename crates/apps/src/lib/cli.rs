@@ -822,6 +822,7 @@ pub mod cmds {
                     // The `run` command is the default if no sub-command given
                     .or(Some(Self::Run(LedgerRun(args::LedgerRun {
                         start_time: None,
+                        validate_merkle_tree: false,
                     }))))
             })
         }
@@ -3102,6 +3103,7 @@ pub mod args {
     pub const UNSAFE_DONT_ENCRYPT: ArgFlag = flag("unsafe-dont-encrypt");
     pub const UNSAFE_SHOW_SECRET: ArgFlag = flag("unsafe-show-secret");
     pub const USE_DEVICE: ArgFlag = flag("use-device");
+    pub const VALIDATE_MERKLE_TREE: ArgFlag = flag("validate-merkle-tree");
     pub const VALIDATOR: Arg<WalletAddress> = arg("validator");
     pub const VALIDATOR_OPT: ArgOpt<WalletAddress> = VALIDATOR.opt();
     pub const VALIDATOR_ACCOUNT_KEY: ArgOpt<WalletPublicKey> =
@@ -3182,12 +3184,17 @@ pub mod args {
     #[derive(Clone, Debug)]
     pub struct LedgerRun {
         pub start_time: Option<DateTimeUtc>,
+        pub validate_merkle_tree: bool,
     }
 
     impl Args for LedgerRun {
         fn parse(matches: &ArgMatches) -> Self {
             let start_time = NAMADA_START_TIME.parse(matches);
-            Self { start_time }
+            let validate_merkle_tree = VALIDATE_MERKLE_TREE.parse(matches);
+            Self {
+                start_time,
+                validate_merkle_tree,
+            }
         }
 
         fn def(app: App) -> App {
@@ -3198,6 +3205,10 @@ pub mod args {
                  allowed between each component.\nAll of these examples are \
                  equivalent:\n2023-01-20T12:12:12Z\n2023-01-20 \
                  12:12:12Z\n2023-  01-20T12:  12:12Z",
+            ))
+            .arg(VALIDATE_MERKLE_TREE.def().help(
+                "Recompute the merkle tree root of storage and check that it \
+                 matches the saved one.",
             ))
         }
     }
