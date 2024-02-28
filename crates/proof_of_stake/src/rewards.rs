@@ -22,7 +22,7 @@ use crate::storage::{
     write_last_staked_ratio,
 };
 use crate::token::storage_key::minted_balance_key;
-use crate::token::{credit_tokens, inflation};
+use crate::token::credit_tokens;
 use crate::types::{into_tm_voting_power, BondId, ValidatorState, VoteInfo};
 use crate::{
     bond_amounts_for_rewards, get_total_consensus_stake, staking_token_address,
@@ -389,8 +389,8 @@ where
 
     // Write new rewards parameters that will be used for the inflation of
     // the current new epoch
-    let locked_amount = Dec::try_from(locked_amount).into_storage_result()?;
-    let total_amount = Dec::try_from(total_amount).into_storage_result()?;
+    let locked_amount = Dec::from(locked_amount);
+    let total_amount = Dec::from(total_amount);
     let locked_ratio = locked_amount / total_amount;
 
     write_last_staked_ratio(storage, locked_ratio)?;
@@ -645,8 +645,8 @@ mod tests {
             Dec::from_str("0.5").unwrap(),
         )
         .unwrap();
-        let locked_ratio_0 = Dec::try_from(locked_amount).unwrap()
-            / Dec::try_from(total_native_amount).unwrap();
+        let locked_ratio_0 = Dec::from(locked_amount)
+            / Dec::from(total_native_amount);
 
         println!(
             "Round 0: Locked ratio: {locked_ratio_0}, inflation: {inflation_0}"
@@ -673,8 +673,8 @@ mod tests {
 
         // BUG: DIDN'T ADD TO TOTAL AMOUNT
 
-        let locked_ratio_1 = Dec::try_from(locked_amount).unwrap()
-            / Dec::try_from(total_native_amount).unwrap();
+        let locked_ratio_1 = Dec::from(locked_amount)
+            / Dec::from(total_native_amount);
 
         println!(
             "Round 1: Locked ratio: {locked_ratio_1}, inflation: {inflation_1}"
@@ -701,8 +701,8 @@ mod tests {
         )
         .unwrap();
 
-        let locked_ratio_2 = Dec::try_from(locked_amount).unwrap()
-            / Dec::try_from(total_native_amount).unwrap();
+        let locked_ratio_2 = Dec::from(locked_amount)
+            / Dec::from(total_native_amount);
         println!(
             "Round 2: Locked ratio: {locked_ratio_2}, inflation: {inflation_2}",
         );
@@ -735,8 +735,8 @@ mod tests {
             Dec::from_str("0.9").unwrap(),
         )
         .unwrap();
-        let locked_ratio_0 = Dec::try_from(locked_amount).unwrap()
-            / Dec::try_from(total_native_amount).unwrap();
+        let locked_ratio_0 = Dec::from(locked_amount)
+            / Dec::from(total_native_amount);
 
         println!(
             "Round 0: Locked ratio: {locked_ratio_0}, inflation: {inflation_0}"
@@ -763,8 +763,8 @@ mod tests {
 
         // BUG: DIDN'T ADD TO TOTAL AMOUNT
 
-        let locked_ratio_1 = Dec::try_from(locked_amount).unwrap()
-            / Dec::try_from(total_native_amount).unwrap();
+        let locked_ratio_1 = Dec::from(locked_amount)
+            / Dec::from(total_native_amount);
 
         println!(
             "Round 1: Locked ratio: {locked_ratio_1}, inflation: {inflation_1}"
@@ -791,8 +791,8 @@ mod tests {
         )
         .unwrap();
 
-        let locked_ratio_2 = Dec::try_from(locked_amount).unwrap()
-            / Dec::try_from(total_native_amount).unwrap();
+        let locked_ratio_2 = Dec::from(locked_amount)
+            / Dec::from(total_native_amount);
         println!(
             "Round 2: Locked ratio: {locked_ratio_2}, inflation: {inflation_2}",
         );

@@ -6,9 +6,6 @@ use namada_core::dec::Dec;
 use namada_core::uint::Uint;
 use namada_parameters as parameters;
 use namada_storage::{StorageRead, StorageWrite};
-use namada_trans_token::inflation::{
-    ShieldedRewardsController, ShieldedValsToUpdate,
-};
 use namada_trans_token::storage_key::{balance_key, minted_balance_key};
 use namada_trans_token::{read_denom, Amount, DenominatedAmount, Denomination};
 
